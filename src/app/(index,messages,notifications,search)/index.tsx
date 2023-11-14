@@ -1,41 +1,18 @@
-import { FlatList, Text, TouchableHighlight, View } from "react-native";
+import { FlatList, TouchableHighlight, View } from "react-native";
 import PageView from "../../components/containers/PageView";
-import Tweet from "../../components/Tweet";
-import { Tweet as TweetType, User } from "../../types";
+import Tweet from "../../components/tweet/Tweet";
 
-const tmpUsers: User[] = [
-  {
-    id: 1,
-    fullname: "Dio Brando",
-    username: "diobrando",
-    image: "../assets/images/users/its_was_me_dio.jpeg",
-  },
-];
-
-const tmp_tweet: TweetType = {
-  id: "1",
-  owner: tmpUsers[0],
-  content: "",
-  created_at: "",
-  image: "",
-  quote_count: 5,
-  reply_count: 5,
-  favorite_count: 5,
-  favorited: false,
-  also_liked: [tmpUsers[0], tmpUsers[0]],
-  also_retweeted: tmpUsers[0],
-};
-
-const tmp_tweets: TweetType[] = Array.from({ length: 20 }).map((e, i) => ({
-  ...tmp_tweet,
-  id: i + 1 + "",
-}));
+import { tmp_tweets } from "../../constants/config";
 
 export default function IndexTab() {
   return (
     <PageView>
       <FlatList
         data={tmp_tweets}
+        style={{
+          paddingHorizontal: 20,
+          backgroundColor: "#fff",
+        }}
         ItemSeparatorComponent={({ highlighted }) => (
           <View
             style={{

@@ -17,4 +17,7 @@ export type Tweet = {
   favorited: boolean;
   also_liked: User[];
   also_retweeted: User;
+  is_thread_start?: boolean;
+  is_thread?: boolean;
+  is_thread_end?: boolean;
 };
