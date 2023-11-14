@@ -1,12 +1,52 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import AppIcon from "../assets/images/app-icon.svg";
 import FeatureStrokeIcon from "../assets/images/icons/feature_stroke_icon.svg";
 import Colors from "../constants/Colors";
+import { useRouter } from "expo-router";
+import { LeftArrowIcon } from "../lib/icons";
 
-const TabMainHeader = () => {
-  return (
-    <View style={styles.container}>
-      <View style={styles.left_wrapper}>
+type TabMainHeaderConfig = {
+  sides?: {
+    left: "back" | "user" | "empty";
+    center: "title" | "logo";
+    right: "feature" | "empty";
+  };
+  options?: {
+    title?: string;
+  };
+};
+
+type TabMainHeaderComponents = {
+  left: {
+    back: () => JSX.Element;
+    user: () => JSX.Element;
+  };
+  center: {
+    title: () => JSX.Element;
+    logo: () => JSX.Element;
+  };
+  right: {
+    feature: () => JSX.Element;
+  };
+};
+
+const createTabMainHeaderComponents = (
+  options: TabMainHeaderConfig["options"]
+): TabMainHeaderComponents => {
+  const router = useRouter();
+
+  return {
+    left: {
+      back: () => (
+        <Pressable
+          onPress={() => {
+            router.back();
+          }}
+        >
+          <LeftArrowIcon width={13} height={19} />
+        </Pressable>
+      ),
+      user: () => (
         <View style={styles.user_image_wrapper}>
           <Image
             source={require("../assets/images/users/its_was_me_dio.jpeg")}
@@ -14,14 +54,40 @@ const TabMainHeader = () => {
           />
           <View style={styles.user_image_dot}></View>
         </View>
+      ),
+    },
+    center: {
+      title: () => <Text style={styles.title}>{options?.title}</Text>,
+      logo: () => <AppIcon width={27} height={22} />,
+    },
+    right: {
+      feature: () => <FeatureStrokeIcon width={23} height={22} />,
+    },
+  };
+};
+
+const TabMainHeader = ({
+  sides = {
+    left: "user",
+    center: "logo",
+    right: "feature",
+  },
+  options,
+}: TabMainHeaderConfig) => {
+  const tabMainHeaderComps = createTabMainHeaderComponents(options);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.left_wrapper}>
+        {sides.left !== "empty" && tabMainHeaderComps.left[sides.left]()}
       </View>
 
       <View style={styles.center_wrapper}>
-        <AppIcon width={27} height={22} />
+        {tabMainHeaderComps.center[sides.center]()}
       </View>
 
       <View style={styles.right_wrapper}>
-        <FeatureStrokeIcon width={23} height={22} />
+        {sides.right !== "empty" && tabMainHeaderComps.right[sides.right]()}
       </View>
     </View>
   );
@@ -33,8 +99,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: 7,
-    paddingBottom: 5,
+    height: 45,
     paddingHorizontal: 20,
     backgroundColor: Colors.light.background,
     borderBottomWidth: 0.25,
@@ -72,6 +137,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.light.background,
     borderRadius: 3,
     backgroundColor: Colors.main,
+  },
+  title: {
+    fontWeight: "700",
   },
 });
 
